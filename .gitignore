@@ -1,0 +1,14 @@
+# Local data, validation inputs, outputs, and archived implementations.
+/tests/
+/results/
+/neurobench_data/
+/_archive/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+build/
+dist/
+TODO.md
+Thumbs.db

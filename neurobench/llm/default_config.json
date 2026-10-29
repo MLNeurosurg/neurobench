@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "api": {
+    "base_url": "http://localhost:8000/v1",
+    "model": "gpt-oss-20b",
+    "request_args": {
+      "seed": 42,
+      "temperature": 0.0,
+      "top_p": 0.95,
+      "max_tokens": 5120,
+      "reasoning_effort": "low"
+    }
+  },
+  "execution": {
+    "max_concurrent": 128,
+    "timeout_seconds": 180,
+    "retry_handling": {
+      "transport_error_retries": 5,
+      "validation_error_retries": 5,
+      "backoff_initial_seconds": 1,
+      "backoff_max_seconds": 60
+    }
+  }
+}
