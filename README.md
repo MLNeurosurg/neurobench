@@ -123,6 +123,6 @@ For questions, bug reports, or feedback, please [open an issue](https://github.c
 
 ## Citation
 
-NeuroBench was released alongside **[Neuro-VL: A multimodal intelligence for neuroimaging](https://github.com/MLNeurosurg/neuro-vl)**.
+NeuroBench was released alongside **[Neuro-VL: A frontier machine intelligence for neuroimaging](https://github.com/MLNeurosurg/neuro-vl)**.
 
 The Neuro-VL/NeuroBench preprint is **coming soon**.
