@@ -60,7 +60,6 @@ def build_parser(task=None):
     if task is None or task == 'closed_ended':
         group = evaluate.add_argument_group('closed-ended options')
         group.add_argument('--question_column', default='question')
-        group.add_argument('--group_by', nargs='+', default=['dataset'], help='Columns defining separate summary groups')
     if task is None or task == 'classification':
         from neurobench.evaluation.classification.runner import DATASETS
         group = evaluate.add_argument_group('classification options')
@@ -71,7 +70,7 @@ def build_parser(task=None):
     if task is None or task == 'report_generation':
         group = evaluate.add_argument_group('report-generation options')
         group.add_argument('--id_columns', nargs='+', default=['dataset', 'patient', 'study'])
-        group.add_argument('--prompt_path', type=Path, default=ROOT / 'evaluation/report_generation/prompts/report.txt')
+        group.add_argument('--prompt_path', type=Path, default=ROOT / 'evaluation/report_generation/prompts/report_judge.txt')
         group.add_argument('--n_evals_per_pair', type=positive_integer, default=4)
     return parser
 

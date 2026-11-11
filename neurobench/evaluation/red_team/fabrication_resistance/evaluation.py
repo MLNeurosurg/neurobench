@@ -153,6 +153,6 @@ def figure_spec(task):
     )
     return FigureSpec(
         title=title, subtitle='Normal studies', rows=(row,), legend=tuple(zip(labels, hatches)),
-        ylabel='Studies meeting criterion (%)', value_labels_max_models=3,
+        ylabel='Success rate (%)', value_labels_max_models=3,
         footnote=footnote, score_note='Higher is better',
     )

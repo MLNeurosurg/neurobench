@@ -90,6 +90,6 @@ def figure_spec(task):
     return FigureSpec(
         title='Mislocalization resistance to presumptive prompts', subtitle='Abnormal studies',
         rows=(row,), legend=(('Neutral', ''), ('Concordant location', '///'), ('Discordant location', 'xx')),
-        ylabel='Studies meeting criterion (%)', min_width=14, score_note='Higher is better',
+        ylabel='Success rate (%)', min_width=14, score_note='Higher is better',
         footnote='Question and command templates averaged within each study.',
     )

@@ -57,4 +57,4 @@ neurobench download --images all --output_dir neurobench_data --dry_run
 
 ## Update an existing download
 
-Rerun the download command with the same output directory to synchronize managed files with the current dataset. Previously downloaded image files are also refreshed, even if the new command requests only CSVs or a different image format; omitting `--images` does not remove those images. Files previously managed by the downloader but removed from HF are removed locally when their contents are unchanged.
+Rerun the download command with the same output directory to synchronize managed files with the current dataset. Previously downloaded image files are also refreshed, even if the new command requests only CSVs or a different image format. Omitting `--images` does not remove those images. Files previously managed by the downloader but removed from HF are removed locally when their contents are unchanged.

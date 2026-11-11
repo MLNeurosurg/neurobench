@@ -45,9 +45,3 @@ Report votes also identify the comparison, A/B model assignments, `winner`, `win
 Failed votes retain any raw response but leave parsed rubric fields blank. Successful votes can still be excluded from summaries. Check `pairwise.csv` for report inclusion and `results.csv` for red-team inclusion.
 
 Both pipelines use `success`, `missing_model_response`, `failed_api_request`, or `failed_judge_response` in `results.csv`'s `evaluation_status`. Invalid or absent replies produce `failed_judge_response`. API failures take precedence when both occur. The vote table preserves individual failure statuses. The status in `config.json` describes the whole run.
-
-## Failed or interrupted runs
-
-Invalid inputs or configuration stop evaluation. When the output directory is unused, the first error is recorded with `action=evaluation_aborted`. Existing run artifacts are never overwritten by this error log. After correcting the input, use a new or empty output directory.
-
-Recovered retry errors do not reduce coverage. Interrupted runs may lack finalized issue records.

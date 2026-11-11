@@ -65,21 +65,19 @@ def parse_answer(value, choices):
 def load_inputs(args):
     """Load closed-ended responses and validate reference answers, model columns, and grouping."""
     columns, models = zip(*args.candidate_answer)
-    for name, values in [('candidate columns', columns), ('model names', models), ('grouping columns', args.group_by)]:
+    for name, values in [('candidate columns', columns), ('model names', models)]:
         if len(set(values)) != len(values) or any(not value.strip() for value in values):
             raise ValueError(f'Blank or duplicate {name}')
-    metadata = {args.question_column, args.reference_answer_column, *args.group_by}
+    metadata = {args.question_column, args.reference_answer_column, 'dataset'}
     if set(columns) & metadata or args.question_column == args.reference_answer_column:
-        raise ValueError('Candidate columns must differ from question, reference, and grouping columns')
+        raise ValueError('Candidate columns must differ from question, reference, and dataset columns')
     header, rows = read_csv(args.csv, metadata | set(columns))
     if set(header) & set(GENERATED):
         raise ValueError(f'Input columns collide with output fields: {sorted(set(header) & set(GENERATED))}')
-    if set(args.group_by) & set(SUMMARY):
-        raise ValueError('Grouping columns collide with summary fields')
     specs = []
     for index, row in enumerate(rows, 1):
-        if any(not row[key].strip() for key in [args.question_column, *args.group_by]):
-            raise ValueError(f'CSV record {index}: blank question or grouping value')
+        if any(not row[key].strip() for key in [args.question_column, 'dataset']):
+            raise ValueError(f'CSV record {index}: blank question or dataset value')
         try:
             specs.append(answer_spec(row[args.question_column], row[args.reference_answer_column]))
         except ValueError as exc:
@@ -100,20 +98,20 @@ def execute(args):
                       'candidate_answer': normalize_answer(row[column]), 'parsed_answer': parsed,
                       'reference_answer': gold, 'parse_status': status, 'correct': int(parsed == gold)}
             results.append(record)
-            groups[(model, *(row[field] for field in args.group_by))].append(record)
+            groups[(model, row['dataset'])].append(record)
     summary = []
-    for (model, *values), records in groups.items():
+    for (model, dataset), records in groups.items():
         n = len(records); correct = sum(row['correct'] for row in records)
         parsed = sum(row['parse_status'] == 'parsed' for row in records)
         blank = sum(row['parse_status'] == 'blank' for row in records)
-        summary.append({'model': model, **dict(zip(args.group_by, values)), 'n_questions': n,
+        summary.append({'model': model, 'dataset': dataset, 'n_questions': n,
                         'n_correct': correct, 'n_parsed': parsed, 'n_blank': blank,
                         'n_unparseable': n - parsed - blank, 'accuracy': correct / n, 'parse_coverage': parsed / n})
     output.mkdir(parents=True, exist_ok=True)
     save_csv(output / 'results.csv', results, [*header, *GENERATED])
     diagnostics = [issues.issue(
         'closed_ended', row['input_row_index'],
-        {field: row[field] for field in dict.fromkeys(('dataset', 'patient', 'study', 'label', *args.group_by))
+        {field: row[field] for field in ('dataset', 'patient', 'study', 'label')
          if field in row}, model=row['model'],
         reason='missing_model_response' if row['parse_status'] == 'blank' else 'unparseable_model_response',
         action='scored_incorrect', included=True, scope='response',
@@ -121,17 +119,18 @@ def execute(args):
         if row['parse_status'] == 'blank' else 'No unambiguous valid answer could be extracted; counted as incorrect (score 0).')
         for row in results if row['parse_status'] != 'parsed']
     issues.save_issues(output, diagnostics)
-    save_csv(output / 'summary.csv', summary, ['model', *args.group_by, *SUMMARY[1:]])
+    save_csv(output / 'summary.csv', summary, ['model', 'dataset', *SUMMARY[1:]])
     config = {'code_version': __version__, 'task': 'closed_ended',
               'parser': 'conservative_answer_markers', 'candidates': args.candidate_answer,
               'question_column': args.question_column, 'reference_answer_column': args.reference_answer_column,
-              'group_by': args.group_by, 'denominator': 'all input questions in each group',
+              'group_by': ['dataset'], 'denominator': 'all input questions in each group',
               'csv_path': str(args.csv.resolve()),
               'n_questions': len(rows), 'status': 'complete', 'updated_at': datetime.now(timezone.utc).isoformat()}
     write_json(output / 'config.json', config)
-    print(f'Saved {output}: {len(rows)} questions, {len(args.candidate_answer)} models.')
+    n_models = len(args.candidate_answer)
+    model_word = 'model' if n_models == 1 else 'models'
+    print(f'Saved {output}: {len(rows)} questions, {n_models} {model_word}.')
     for row in summary:
-        group = ', '.join(f'{key}={row[key]}' for key in args.group_by)
-        print(f'{row["model"]} ({group}): accuracy {row["accuracy"]:.1%}, parse coverage {row["parse_coverage"]:.1%}')
+        print(f'{row["model"]} (dataset={row["dataset"]}): accuracy {row["accuracy"]:.1%}, parse coverage {row["parse_coverage"]:.1%}')
     issues.warn_issues(output, diagnostics, 'response')
     return 0

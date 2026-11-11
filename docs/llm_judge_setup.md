@@ -78,7 +78,7 @@ curl --fail --silent --show-error http://localhost:8000/v1/chat/completions \
   }'
 ```
 
-The response should contain a nonempty `choices[0].message.content` with the requested JSON and a `finish_reason` of `stop`. Report and red-team evaluators accept plain JSON or JSON enclosed in one complete Markdown code fence; required fields and allowed labels are validated identically. The server may also return a separate reasoning field. Once this works, leave terminal 1 running and continue in terminal 2.
+The response should contain a nonempty `choices[0].message.content` with the requested JSON and a `finish_reason` of `stop`. Report and red-team evaluators accept plain JSON or JSON enclosed in one complete Markdown code fence. Both formats use the same validation for required fields and allowed labels. The server may also return a separate reasoning field. Once this works, leave terminal 1 running and continue in terminal 2.
 
 ### 5. Check the NeuroBench configuration
 
@@ -103,9 +103,9 @@ If you want to use a different LLM as judge, use `--llm_config_path PATH` with s
 
 ## Check completion
 
-The progress bar counts judge requests, with separate successful and failed totals, elapsed time, and an estimated remaining time once requests finish. Retries do not count as additional requests; a failed request advances the bar only after its attempts are exhausted.
+The progress bar counts judge requests, with separate successful and failed totals, elapsed time, and an estimated remaining time once requests finish. Retries do not count as additional requests. A failed request advances the bar only after its attempts are exhausted.
 
-Every evaluation requires a new or empty output directory. If `--output_dir` already contains any files or subdirectories, evaluation stops with an error and leaves those contents unchanged. Interrupted or failed runs cannot be resumed; rerun the full evaluation in a fresh directory. Retries within a run preserve each vote's seed and decoding settings.
+Every evaluation requires a new or empty output directory. If `--output_dir` already contains any files or subdirectories, evaluation stops with an error and leaves those contents unchanged. Interrupted or failed runs cannot be resumed. Rerun the full evaluation in a fresh directory. Retries within a run preserve each vote's seed and decoding settings.
 
 Alongside the scores and figure, each run saves these records:
 
@@ -118,4 +118,4 @@ Alongside the scores and figure, each run saves these records:
 
 Check coverage alongside the scores. Report generation and red-team summaries retain only complete, matched questions or studies. Missing responses and exhausted judge failures exclude the corresponding question or study across all compared models within that task. Figures display retained/total counts, and a terminal warning lists issue counts. See [evaluation issues](evaluation_guides/auditing.md) and the individual scoring guides for details.
 
-Exit codes are `0` when no judge failures remain, `1` for exhausted judge failures, `2` for invalid inputs/configuration, and `130` for interruption. Exit code `0` does not establish that every model supplied a response; missing responses and their exclusions are recorded in `evaluation_issues.csv`.
+Exit codes are `0` when no judge failures remain, `1` for exhausted judge failures, `2` for invalid inputs/configuration, and `130` for interruption. Exit code `0` does not establish that every model supplied a response. Missing responses and their exclusions are recorded in `evaluation_issues.csv`.

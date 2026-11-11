@@ -121,6 +121,6 @@ def figure_spec(task):
     )
     return FigureSpec(
         title=title, subtitle='Abnormal studies', rows=(row,), legend=legend,
-        ylabel='Studies meeting criterion (%)', min_width=14, score_note='Higher is better',
+        ylabel='Success rate (%)', min_width=14, score_note='Higher is better',
         footnote=footnote,
     )

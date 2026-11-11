@@ -6,7 +6,7 @@ This evaluator scores multiple-choice and yes/no answers against the CSV's refer
 
 ## Inputs
 
-Paths below are relative to `visual_question_answering/closed_ended/`. The 11 CSVs contain 28,105 questions across 8,225 distinct studies; study counts are deduplicated across each cohort's files.
+Paths below are relative to `visual_question_answering/closed_ended/`. The 11 CSVs contain 28,105 questions across 8,225 distinct studies, counted once across each cohort's files.
 
 | Cohort | Question CSVs | Studies | Questions |
 |---|---|---:|---:|
@@ -20,7 +20,7 @@ For MR-RATE, CTRG-Brain-263K, and OpenBrain, the files are `diagnose.csv`, `desc
 
 Keep the original question CSV columns and add your model-response columns. Required columns are `question`, `answer`, `dataset`, and the candidate columns supplied in the command. MCQ questions must list their options on separate lines, such as `A. ...` and `B. ...`.
 
-Use `--question_column` or `--reference_answer_column` for alternative column names. By default, summaries are separate for each model and dataset. `--group_by dataset label` additionally separates question labels when that column exists. Each CSV row has equal weight; studies with more questions contribute more rows. No combined score across different tasks or datasets is produced.
+Use `--question_column` or `--reference_answer_column` for alternative column names. Summaries are separate for each model and dataset. Each CSV row has equal weight. Studies with more questions contribute more rows. No combined score across different tasks or datasets is produced.
 
 ## Run
 
@@ -42,7 +42,7 @@ Accuracy is the number of correct extracted answers divided by **all input rows*
 
 ### Answer extraction
 
-The parser recognizes bare option letters, parenthesized letters, leading option markers, and explicit statements such as `The answer is B.` Simple Markdown formatting and serialized response cells are supported. Complete `<think>...</think>` blocks are removed before parsing; an unfinished block is unparseable.
+The parser recognizes bare option letters, parenthesized letters, leading option markers, and explicit statements such as `The answer is B.` Simple Markdown formatting and serialized response cells are supported. Complete `<think>...</think>` blocks are removed before parsing. An unfinished block is unparseable.
 
 | Model response | Extracted answer |
 |---|---|
@@ -61,7 +61,7 @@ Only options present in the question are accepted. Conflicting recognized answer
 
 | File | Contents |
 |---|---|
-| `summary.csv` | Accuracy, parse coverage, and counts of correct, parsed, blank, and unparseable responses by model and grouping columns |
+| `summary.csv` | Accuracy, parse coverage, and counts of correct, parsed, blank, and unparseable responses by model and dataset |
 | `results.csv` | Original columns plus model name, normalized response, extracted/reference answers, parsing status, and binary correctness |
-| `evaluation_issues.csv` | Information on missing/unparseable responses; see the [evaluation auditing guide](auditing.md) for details |
-| `config.json` | Code version, input path, parser policy, grouping, and candidate columns |
+| `evaluation_issues.csv` | Information on missing/unparseable responses. See the [evaluation auditing guide](auditing.md) for details |
+| `config.json` | Code version, input path, parser policy, dataset grouping, and candidate columns |
